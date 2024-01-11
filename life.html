@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="lifeStyle.css">
+   
+  </head>
+  <body>
+        <button id="btn_pause" class="head-pause">Pause</button>
+        <button id="btn_settings" class="site-settings">Settings</button>
+        <div id="settings_panel" class="site-panel">
+          <div id="panel_content" class="panel-content">
+            
+          <div class="types">
+            <div class="create-type">
+              <div class="input">
+                <label for="type_name">Name</label>
+                <input id="type_name" type="text">
+              </div>
+              <div class="input">
+                <label for="type_amount">Amount</label>
+                <input id="type_amount" type="text" oninput="this.value = Math.round(Math.abs(this.value))">
+              </div>
+              <div class="input">
+                <label for="type_color">Color</label>
+                <input id="type_color" type="color" value="#ff0000">
+              </div>
+              <button id="create_type_button">CREATE NEW TYPE</button>
+            </div>
+            <div class="all-types"></div>
+           
+          </div>
+          <ul id="rules_list" class="rules-list">
+            <div id="entry" class="rules-entry">
+              
+              <input type="range"/>
+
+            </div>
+          </ul>
+          
+        </div>
+        </div>
+    <canvas id="life">
+        
+    <script src="lifeCanvas.js"></script>
+     
+  </body>
+</html>
