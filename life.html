@@ -20,22 +20,28 @@
               </div>
               <div class="input">
                 <label for="type_amount">Amount</label>
-                <input id="type_amount" type="text" oninput="this.value = Math.round(Math.abs(this.value))">
+                <input id="type_amount" type="text" pattern="^[0-9]+$">
               </div>
               <div class="input">
                 <label for="type_color">Color</label>
-                <input id="type_color" type="color" value="#ff0000">
+                <input id="type_color" type="color" value="#ff00ff">
               </div>
               <button id="create_type_button">CREATE NEW TYPE</button>
             </div>
-            <div class="all-types"></div>
-           
+            <ul id="all_types"class="all-types">    
+              <!-- <div class="type" style="--type-color:green">
+                <button > NAME </button>
+              </div> -->
+            </ul>
           </div>
           <ul id="rules_list" class="rules-list">
             <div id="entry" class="rules-entry">
-              
-              <input type="range"/>
-
+              <select name="entry1" id="entry1"><option value="1">RED</option></select>
+              <select name="entry2" id="entry2"></select>
+              <div class="input">
+                <label for="rep">VALUE</label>
+                <input id="rep" type="range"/>
+              </div>
             </div>
           </ul>
           

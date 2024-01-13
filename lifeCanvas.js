@@ -4,6 +4,17 @@ let isPaused = false
 let PARTICEL_SIZE = 4
 let multiplier = 2
 
+//handle Canvas
+let canvas = document.getElementById("life")
+canvas.width = canvas.getBoundingClientRect().width
+canvas.height = canvas.getBoundingClientRect().height
+
+const WINDOW = {
+  width: canvas.getBoundingClientRect().width,
+  height: canvas.getBoundingClientRect().height,
+}
+const ctx = canvas.getContext("2d")
+const particles = []
 //handle Settings
 const settingButton = document.getElementById("btn_settings")
 const settingPanel = document.getElementById("settings_panel")
@@ -33,58 +44,90 @@ toggleSettingsPanel()
 settingButton.addEventListener("click", toggleSettingsPanel)
 
 //handle Types
+const initTypes = [
+  { name: "red", amount: "150", color: "red" },
+  { name: "green", amount: "150", color: "green" },
+  { name: "yellow", amount: "150", color: "yellow" },
+  { name: "blue", amount: "150", color: "blue" },
+]
+
 const Types = []
 //create Types
 const typeName = document.getElementById("type_name")
 const typeAmount = document.getElementById("type_amount")
 const typeColor = document.getElementById("type_color")
 const createTypeButton = document.getElementById("create_type_button")
+const allTypesEL = document.getElementById("all_types")
+typeAmount.addEventListener("input", function () {
+  this.value = this.value.replace(/[^0-9]/g, "")
+})
+const addType = (name, amount, color) => {
+  //TODO do UI prettier
+  const obj = { name: name, amount: amount, color: color }
+  let li = document.createElement("li")
+  li.textContent = JSON.stringify(obj)
+  allTypesEL.appendChild(li)
+  Types.push(obj)
 
+  create(obj.name, obj.amount, obj.color)
+}
+//add initial Values
+for (let i = 0; i < initTypes.length; i++) {
+  addType(initTypes[i].name, initTypes[i].amount, initTypes[i].color)
+}
 const validateCreateNew = () => {
-  //typeName =="" or eq in typeArr
-  //amount !== 0 or -x
-  //color is valid?
-  //on err add new StyleClass .err
-  // components should remove .err onfocus
+  let hasError = false
+  const name = typeName.value
+  const amount = typeAmount.value
+  const color = typeColor.value
+  if (name === "" || Types.some(type => type.name === name)) {
+    typeName.classList.add("err")
+    hasError = true
+  }
+  if (amount <= 0) {
+    typeAmount.classList.add("err")
+    hasError = true
+  }
+
+  if (!hasError) addType(name, amount, color)
 }
+
+const removeCSSErr = e => {
+  if (e.target.classList.contains("err")) {
+    e.target.classList.remove("err")
+  }
+}
+typeName.addEventListener("focus", removeCSSErr)
+typeAmount.addEventListener("focus", removeCSSErr)
+typeColor.addEventListener("focus", removeCSSErr)
 createTypeButton.addEventListener("click", validateCreateNew)
-//handle Canvas
-let canvas = document.getElementById("life")
-canvas.width = canvas.getBoundingClientRect().width
-canvas.height = canvas.getBoundingClientRect().height
 
-const WINDOW = {
-  width: canvas.getBoundingClientRect().width,
-  height: canvas.getBoundingClientRect().height,
-}
-const ctx = canvas.getContext("2d")
-
-const draw = (x, y, c, sx, sy) => {
+function draw(x, y, c, sx, sy) {
   ctx.fillStyle = c
   ctx.fillRect(x, y, sx, sy)
 }
 
-const particles = []
-const particle = (x, y, c) => {
-  return { x: x, y: y, vx: 0, vy: 0, color: c }
+function particle(name, x, y, c) {
+  return { name: name, x: x, y: y, vx: 0, vy: 0, color: c }
 }
-const randomX = () => {
+function randomX() {
   return Math.random() * WINDOW.width - PARTICEL_SIZE * 4
 }
 
-const randomY = () => {
+function randomY() {
   return Math.random() * WINDOW.height - PARTICEL_SIZE * 4
 }
-const create = (number, color) => {
+function create(name, number, color) {
   group = []
   for (let i = 0; i < number; i++) {
-    group.push(particle(randomX(), randomY(), color))
-    particles.push(group[i])
+    group.push(particle(name, randomX(), randomY(), color))
+    //maybe add 2d arr instead
   }
+  particles.push({ name, group })
   return group
 }
 
-const rule = (p1, p2, g) => {
+function rule(p1, p2, g) {
   for (let i = 0; i < p1.length; i++) {
     fx = 0
     fy = 0
@@ -118,45 +161,40 @@ const rule = (p1, p2, g) => {
 
 //create Objects
 
-yellow = create(200 * multiplier, "yellow")
-red = create(30 * multiplier, "red")
-green = create(150 * multiplier, "green")
-blue = create(35 * multiplier, "blue")
+// yellow = create(200 * multiplier, "yellow")
+// red = create(30 * multiplier, "red")
+// green = create(150 * multiplier, "green")
+// blue = create(35 * multiplier, "blue")
+function rules() {
+  for (let i = 0; i < particles.length; i++) {
+    const groupA = particles[i].group
 
-const rules = () => {
-  rule(green, green, Math.random() * 2 - 1)
-  rule(green, red, Math.random() * 2 - 1)
-  rule(green, yellow, Math.random() * 2 - 1)
-  rule(green, blue, Math.random() * 2 - 1)
-  rule(red, red, Math.random() * 2 - 1)
-  rule(red, green, Math.random() * 2 - 1)
-  rule(red, blue, Math.random() * 2 - 1)
-  rule(yellow, yellow, Math.random() * 2 - 1)
-  rule(yellow, green, Math.random() * 2 - 1)
-  rule(yellow, blue, Math.random() * 2 - 1)
-  rule(blue, blue, Math.random() * 2 - 1)
-  rule(blue, red, Math.random() * 2 - 1)
-  rule(blue, yellow, Math.random() * 2 - 1)
-  rule(blue, green, Math.random() * 2 - 1)
+    for (let j = 0; j < particles.length; j++) {
+      if (i === j) continue // self-interaction
+
+      const groupB = particles[j].group
+
+      // get OBJECT VIA UI and implement
+      rule(groupA, groupB, Math.random() * 2 - 1)
+    }
+  }
 }
 
-const update = () => {
+function update() {
   rules()
 
   draw(0, 0, "rgba(0,0,0,0.95)", WINDOW.width, WINDOW.height)
   for (let i = 0; i < particles.length; i++) {
-    draw(
-      particles[i].x,
-      particles[i].y,
-      particles[i].color,
-      PARTICEL_SIZE,
-      PARTICEL_SIZE
-    )
+    const particleGroup = particles[i].group
+    for (let j = 0; j < particleGroup.length; j++) {
+      const particle = particleGroup[j]
+      draw(particle.x, particle.y, particle.color, PARTICEL_SIZE, PARTICEL_SIZE)
+    }
   }
   if (!isPaused) requestAnimationFrame(update)
 }
 
-const handlePause = () => {
+function handlePause() {
   isPaused = !isPaused
   if (isPaused === false) {
     update()
@@ -165,4 +203,5 @@ const handlePause = () => {
 }
 document.getElementById("btn_pause").addEventListener("click", handlePause)
 
+addType("purple", 100, "purple")
 update()

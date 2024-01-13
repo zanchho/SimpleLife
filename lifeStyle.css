@@ -1,22 +1,25 @@
+:root {
+  --std-bg-c: rgba(26, 3, 61, 0.6);
+}
+
 body {
   margin: 0;
   overflow: hidden;
   padding: 0;
-  background-color: rgba(26, 3, 61, 0.6);
+  background-color: var(--std-bg-c, red);
   color: white;
 }
 canvas {
   width: 100vw;
   height: 100vh;
 }
-button {
-  background-color: rgba(26, 3, 61, 0.6);
+button,
+input,
+select {
+  background-color: var(--std-bg-c, red);
   color: white;
 }
-input {
-  background-color: rgba(26, 3, 61, 0.6);
-  color: white;
-}
+
 .input {
   display: flex;
   flex-direction: column;
@@ -58,7 +61,7 @@ input {
   width: var(--_setting-panel-width, 0vw);
   height: 100vh;
   margin-left: calc(100vw - var(--_setting-panel-width));
-  background-color: rgba(26, 3, 61, 0.6);
+  background-color: var(--std-bg-c, red);
 }
 .panel-content {
   display: flex;
@@ -68,6 +71,14 @@ input {
   margin: auto;
   background-color: rgba(43, 29, 65, 0.8);
 }
+
+.panel-content .input,
+.panel-content button {
+  width: 25%;
+  padding: 0;
+  margin: auto;
+}
+
 .types,
 .rules-list {
   width: 90%;
@@ -84,4 +95,18 @@ input {
   margin: auto;
   align-content: space-between;
   gap: 5%;
+}
+.all-types {
+  margin: auto;
+  margin-top: 10%;
+  height: 90%;
+  width: 90%;
+  background-color: var(--std-bg-c, red);
+  display: flex;
+  flex-direction: column;
+}
+
+/* error Class*/
+.err {
+  border-color: red;
 }
