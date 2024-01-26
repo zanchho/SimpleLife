@@ -15,6 +15,7 @@ const WINDOW = {
 }
 const ctx = canvas.getContext("2d")
 const particles = []
+let rulesArr = []
 //handle Settings
 const settingButton = document.getElementById("btn_settings")
 const settingPanel = document.getElementById("settings_panel")
@@ -46,9 +47,9 @@ settingButton.addEventListener("click", toggleSettingsPanel)
 //handle Types
 const initTypes = [
   { name: "red", amount: "150", color: "red" },
-  { name: "green", amount: "150", color: "green" },
-  { name: "yellow", amount: "150", color: "yellow" },
-  { name: "blue", amount: "150", color: "blue" },
+  { name: "green", amount: "200", color: "green" },
+  { name: "yellow", amount: "200", color: "yellow" },
+  { name: "blue", amount: "30", color: "blue" },
 ]
 
 const Types = []
@@ -70,11 +71,39 @@ const addType = (name, amount, color) => {
   Types.push(obj)
 
   create(obj.name, obj.amount, obj.color)
+  updateRuleSet()
+  createRuleSetUI()
 }
-//add initial Values
-for (let i = 0; i < initTypes.length; i++) {
-  addType(initTypes[i].name, initTypes[i].amount, initTypes[i].color)
+function findTypeByName() {}
+function findRuleValue(affector, affects, arr) {
+  if (arr === undefined) arr = [...rulesArr]
+  let res = NaN
+  arr.forEach(function (rule) {
+    //{ affector: Types[i], affects: Types[j], value: 0.34 }
+    if (rule.affector === affector && rule.affects === affects) res = rule.value
+  })
+  return res
 }
+function updateRuleSet() {
+  const arr = [...rulesArr]
+  rulesArr = []
+  const obj = {}
+  for (let i = 0; i < Types.length; i++) {
+    for (let j = 0; j < Types.length; j++) {
+      let value = findRuleValue(Types[i].name, Types[j].name, arr)
+      if (isNaN(value)) value = Math.round((Math.random() * 2 - 1) * 100) / 100
+
+      if (isNaN(value))
+        console.error("updateRuleSet value is NaN:", Types[i], Types[j])
+      rulesArr.push({
+        affector: Types[i].name,
+        affects: Types[j].name,
+        value: value,
+      })
+    }
+  }
+}
+
 const validateCreateNew = () => {
   let hasError = false
   const name = typeName.value
@@ -156,34 +185,81 @@ function rule(p1, p2, g) {
     //dodge on borders
     if (a.x <= 0 || a.x >= WINDOW.width - PARTICEL_SIZE) a.vx *= -1
     if (a.y <= 0 || a.y >= WINDOW.height - PARTICEL_SIZE) a.vy *= -1
+
+    //recreate if %ouside of canvas
+    // const maxOutSide = 1 / 4 // 25%
+    // const maxW = WINDOW.width * maxOutSide
+    // if (a.x <= 0 - maxW || a.x >= WINDOW.width + maxW) console.log("outside")
+  }
+}
+function createRuleSetUI() {
+  const handleOnChange = (r1Name, r2Name, value, showValueElement) => {
+    const arr = [...rulesArr]
+    rulesArr.forEach(function (rule) {
+      if (rule.affector === r1Name && rule.affects === r2Name) {
+        rule.value = value
+        showValueElement.textContent = value
+      }
+    })
+    console.log(arr, rulesArr)
+  }
+  const rootOfListID = "rules_list"
+  const _el = document.getElementById(rootOfListID)
+  _el.innerHTML = "" //reset inner
+
+  for (let i = 0; i < Types.length; i++) {
+    const li = document.createElement("div")
+    const ri1 = document.createElement("h2")
+    ri1.textContent = Types[i].name
+    li.appendChild(ri1)
+
+    for (let j = 0; j < Types.length; j++) {
+      const entry = document.createElement("div")
+      entry.classList.add("entry")
+
+      const ri2 = document.createElement("span")
+      ri2.textContent = "Attraction to: " + Types[j].name
+
+      const range = document.createElement("input")
+      let rangeValue = findRuleValue(Types[i].name, Types[j].name)
+      range.setAttribute("type", "range")
+      range.setAttribute("min", "-1")
+      range.setAttribute("max", "1")
+      range.setAttribute("step", "0.01")
+      range.addEventListener("change", function (ev) {
+        handleOnChange(Types[i].name, Types[j].name, ev.target.value, ri2val)
+      })
+
+      range.setAttribute("value", rangeValue)
+
+      const ri2val = document.createElement("span")
+      ri2val.textContent = rangeValue
+
+      entry.appendChild(ri2)
+      entry.appendChild(range)
+      entry.appendChild(ri2val)
+      li.appendChild(entry)
+    }
+    _el.appendChild(li)
   }
 }
 
-//create Objects
-
-// yellow = create(200 * multiplier, "yellow")
-// red = create(30 * multiplier, "red")
-// green = create(150 * multiplier, "green")
-// blue = create(35 * multiplier, "blue")
 function rules() {
   for (let i = 0; i < particles.length; i++) {
-    const groupA = particles[i].group
+    const A = particles[i]
 
     for (let j = 0; j < particles.length; j++) {
-      if (i === j) continue // self-interaction
+      const B = particles[j]
 
-      const groupB = particles[j].group
-
-      // get OBJECT VIA UI and implement
-      rule(groupA, groupB, Math.random() * 2 - 1)
+      rule(A.group, B.group, findRuleValue(A.name, B.name))
     }
   }
 }
 
 function update() {
   rules()
-
   draw(0, 0, "rgba(0,0,0,0.95)", WINDOW.width, WINDOW.height)
+
   for (let i = 0; i < particles.length; i++) {
     const particleGroup = particles[i].group
     for (let j = 0; j < particleGroup.length; j++) {
@@ -198,10 +274,14 @@ function handlePause() {
   isPaused = !isPaused
   if (isPaused === false) {
     update()
-    return
   }
 }
+
+//add initial Values
+for (let i = 0; i < initTypes.length; i++) {
+  addType(initTypes[i].name, initTypes[i].amount, initTypes[i].color)
+}
+
 document.getElementById("btn_pause").addEventListener("click", handlePause)
 
-addType("purple", 100, "purple")
 update()

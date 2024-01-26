@@ -85,8 +85,12 @@ select {
   height: 40%;
   margin: auto;
 }
+.rules-list {
+  text-align: center;
+  overflow-y: scroll;
+}
 .create-type,
-.rules-entry {
+.entry {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -96,6 +100,15 @@ select {
   align-content: space-between;
   gap: 5%;
 }
+
+.entry {
+  margin: auto 0;
+}
+.entry > * {
+  margin: auto 0;
+  width: 50%;
+}
+
 .all-types {
   margin: auto;
   margin-top: 10%;
@@ -104,6 +117,7 @@ select {
   background-color: var(--std-bg-c, red);
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
 /* error Class*/
