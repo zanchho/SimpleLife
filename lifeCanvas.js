@@ -1,7 +1,12 @@
 //vars
-
+const initTypes = [
+  { name: "red", amount: "200", color: "red" },
+  { name: "green", amount: "300", color: "green" },
+  { name: "yellow", amount: "300", color: "yellow" },
+  { name: "blue", amount: "150", color: "blue" },
+]
 let isPaused = false
-let PARTICEL_SIZE = 4
+let PARTICEL_SIZE = 5
 let multiplier = 2
 
 //handle Canvas
@@ -24,7 +29,7 @@ const panelContent = document.getElementById("panel_content")
 const Settings = {
   widthVarCSS: "--setting-panel-offset:",
   width: "40vw",
-  isPanelExtended: false,
+  isPanelExtended: true,
 }
 
 const toggleSettingsPanel = () => {
@@ -44,14 +49,6 @@ const toggleSettingsPanel = () => {
 toggleSettingsPanel()
 settingButton.addEventListener("click", toggleSettingsPanel)
 
-//handle Types
-const initTypes = [
-  { name: "red", amount: "150", color: "red" },
-  { name: "green", amount: "200", color: "green" },
-  { name: "yellow", amount: "200", color: "yellow" },
-  { name: "blue", amount: "30", color: "blue" },
-]
-
 const Types = []
 //create Types
 const typeName = document.getElementById("type_name")
@@ -62,17 +59,35 @@ const allTypesEL = document.getElementById("all_types")
 typeAmount.addEventListener("input", function () {
   this.value = this.value.replace(/[^0-9]/g, "")
 })
+
+const getTypeEntry = obj => {
+  const { name, amount, color } = obj
+  const entry = document.createElement("div")
+  entry.classList.add("type-entry")
+
+  const nameEl = document.createElement("span")
+  nameEl.classList.add("name")
+  const amountEl = document.createElement("span")
+  const colorEl = document.createElement("span")
+  colorEl.style.color = color
+
+  nameEl.textContent = name
+  amountEl.textContent = amount
+  colorEl.textContent = color
+
+  entry.append(nameEl, amountEl, colorEl)
+  return entry
+}
 const addType = (name, amount, color) => {
   //TODO do UI prettier
   const obj = { name: name, amount: amount, color: color }
   let li = document.createElement("li")
-  li.textContent = JSON.stringify(obj)
+  li.appendChild(getTypeEntry(obj))
   allTypesEL.appendChild(li)
   Types.push(obj)
 
   create(obj.name, obj.amount, obj.color)
   updateRuleSet()
-  createRuleSetUI()
 }
 function findTypeByName() {}
 function findRuleValue(affector, affects, arr) {
@@ -87,14 +102,11 @@ function findRuleValue(affector, affects, arr) {
 function updateRuleSet() {
   const arr = [...rulesArr]
   rulesArr = []
-  const obj = {}
   for (let i = 0; i < Types.length; i++) {
     for (let j = 0; j < Types.length; j++) {
       let value = findRuleValue(Types[i].name, Types[j].name, arr)
       if (isNaN(value)) value = Math.round((Math.random() * 2 - 1) * 100) / 100
 
-      if (isNaN(value))
-        console.error("updateRuleSet value is NaN:", Types[i], Types[j])
       rulesArr.push({
         affector: Types[i].name,
         affects: Types[j].name,
@@ -102,6 +114,7 @@ function updateRuleSet() {
       })
     }
   }
+  createRuleSetUI()
 }
 
 const validateCreateNew = () => {
@@ -150,7 +163,6 @@ function create(name, number, color) {
   group = []
   for (let i = 0; i < number; i++) {
     group.push(particle(name, randomX(), randomY(), color))
-    //maybe add 2d arr instead
   }
   particles.push({ name, group })
   return group
@@ -209,6 +221,7 @@ function createRuleSetUI() {
 
   for (let i = 0; i < Types.length; i++) {
     const li = document.createElement("div")
+    li.style.cssText = `--color: ${Types[i].color}`
     const ri1 = document.createElement("h2")
     ri1.textContent = Types[i].name
     li.appendChild(ri1)
@@ -218,9 +231,11 @@ function createRuleSetUI() {
       entry.classList.add("entry")
 
       const ri2 = document.createElement("span")
+      ri2.classList.add("attraction")
       ri2.textContent = "Attraction to: " + Types[j].name
 
       const range = document.createElement("input")
+      range.classList.add("range")
       let rangeValue = findRuleValue(Types[i].name, Types[j].name)
       range.setAttribute("type", "range")
       range.setAttribute("min", "-1")
@@ -233,6 +248,7 @@ function createRuleSetUI() {
       range.setAttribute("value", rangeValue)
 
       const ri2val = document.createElement("span")
+      ri2val.classList.add("value")
       ri2val.textContent = rangeValue
 
       entry.appendChild(ri2)

@@ -80,46 +80,85 @@ select {
 }
 
 .types,
-.rules-list {
-  width: 90%;
-  height: 40%;
+.rules {
+  width: 95%;
+  height: 45%;
   margin: auto;
 }
-.rules-list {
-  text-align: center;
-  overflow-y: scroll;
+
+.type-entry {
+  display: flex;
+  width: 100%;
 }
+
+.type-entry span {
+  width: 16%;
+}
+.type-entry .name {
+  width: 66%;
+}
+
+h2 {
+  text-align: center;
+}
+
 .create-type,
 .entry {
   display: flex;
   flex-direction: row;
   justify-content: center;
   width: 90%;
-  height: 11%;
-  margin: auto;
+
   align-content: space-between;
   gap: 5%;
+  text-align: left;
+}
+.create-type {
+  margin-top: 5%;
+  height: 10%;
 }
 
 .entry {
   margin: auto 0;
 }
-.entry > * {
-  margin: auto 0;
+
+.entry .attraction,
+.entry .range {
+  margin: 0;
   width: 50%;
 }
-
-.all-types {
+.entry .value {
+  margin: 0;
+  width: 5ch;
+}
+.all-types,
+.rules-list {
   margin: auto;
-  margin-top: 10%;
-  height: 90%;
-  width: 90%;
+  height: 100%;
+  width: 100%;
   background-color: var(--std-bg-c, red);
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  list-style-type: none;
+  gap: 0;
+  padding: 0;
 }
 
+.all-types {
+  height: 80%;
+}
+
+.rules-list div {
+  width: 99%;
+  border: 3px solid var(--color, inherit);
+  border-bottom: none;
+}
+.rules-list > div > * {
+  width: 90%;
+  border: none;
+  margin: auto;
+}
 /* error Class*/
 .err {
   border-color: red;
