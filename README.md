@@ -1,6 +1,6 @@
 # SimpleLife Project README
 
-This project is a life simulation where users can create different types of particles and define rules for how they interact. 
+This project is a life simulation where users can create different types of particles and define rules for how they interact.
 The simulation features a settings panel for adjusting the properties of these particles and the rules governing their behavior.
 
 ## Features
