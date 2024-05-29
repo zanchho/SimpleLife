@@ -9,10 +9,12 @@ body {
   background-color: var(--std-bg-c, red);
   color: white;
 }
+
 canvas {
   width: 100vw;
   height: 100vh;
 }
+
 button,
 input,
 select {
@@ -27,6 +29,7 @@ select {
   width: auto;
   color: white;
 }
+
 .head-pause {
   position: absolute;
   display: flex;
@@ -39,6 +42,7 @@ select {
   border-radius: 0 0 50% 50%;
   border-top: none;
 }
+
 .site-settings {
   --_setting-panel-offset: var(--setting-panel-offset, 0vw);
   position: absolute;
@@ -51,6 +55,7 @@ select {
   border-right: none;
   z-index: 9999; /*to set over scrollbar*/
 }
+
 .site-panel {
   --_setting-panel-width: var(--setting-panel-offset, 0vw);
   position: absolute;
@@ -63,6 +68,7 @@ select {
   margin-left: calc(100vw - var(--_setting-panel-width));
   background-color: var(--std-bg-c, red);
 }
+
 .panel-content {
   display: flex;
   flex-direction: column;
@@ -94,6 +100,7 @@ select {
 .type-entry span {
   width: 16%;
 }
+
 .type-entry .name {
   width: 66%;
 }
@@ -127,10 +134,12 @@ h2 {
   margin: 0;
   width: 50%;
 }
+
 .entry .value {
   margin: 0;
   width: 5ch;
 }
+
 .all-types,
 .rules-list {
   margin: auto;
@@ -155,11 +164,13 @@ h2 {
   border: 3px solid var(--color, inherit);
   border-bottom: none;
 }
+
 .rules-list > div > * {
   width: 90%;
   border: none;
   margin: auto;
 }
+
 /* error Class*/
 .err {
   border-color: red;
