@@ -139,6 +139,7 @@ h2 {
   background-color: var(--std-bg-c, red);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   overflow-y: scroll;
   list-style-type: none;
   gap: 0;

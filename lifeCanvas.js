@@ -92,12 +92,11 @@ const addType = (name, amount, color) => {
 function findTypeByName() {}
 function findRuleValue(affector, affects, arr) {
   if (arr === undefined) arr = [...rulesArr]
-  let res = NaN
-  arr.forEach(function (rule) {
-    //{ affector: Types[i], affects: Types[j], value: 0.34 }
-    if (rule.affector === affector && rule.affects === affects) res = rule.value
+  let found = arr.find(rule => {
+    return rule.affector === affector && rule.affects === affects
   })
-  return res
+  if (!found) return NaN
+  return found.value
 }
 function updateRuleSet() {
   const arr = [...rulesArr]
